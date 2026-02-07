@@ -254,7 +254,12 @@
      <div class="glass-card rounded-xl p-4 mb-4">
       <div id="final-instruments" class="grid grid-cols-4 gap-2 mb-4"><!-- Will be populated by JS -->
       </div>
-      
+      <div id="final-code-display" class="text-center py-4 mb-4 bg-black/30 rounded-xl">
+       <p class="text-gray-400 text-sm mb-2">กรอกรหัสสุดท้ายเพื่อปลดล็อค</p>
+       <p id="final-code-number" class="text-4xl font-bold text-amber-400 tracking-widest">????</p>
+      </div>
+      <div id="final-message" class="text-center text-gray-400">
+      </div>
       <div id="victory-section" class="hidden text-center mt-4">
        <div class="text-6xl mb-4 spirit-rise">
         💎
@@ -905,7 +910,42 @@
     }
     
     // ========== FINAL CODE SCREEN ==========
-    
+    function updateFinalCodeScreen() {
+      const instrumentsDiv = document.getElementById('final-instruments');
+      const codeDisplay = document.getElementById('final-code-number');
+      const messageDiv = document.getElementById('final-message');
+      const victoryDiv = document.getElementById('victory-section');
+      
+      const instruments = [
+        { id: 'drum', name: 'กลอง', emoji: '🥁', digit: '1' },
+        { id: 'ponglang', name: 'โปงลาง', emoji: '🎵', digit: '3' },
+        { id: 'pin', name: 'พิณ', emoji: '🎸', digit: '5' },
+        { id: 'kaen', name: 'แคน', emoji: '🎶', digit: '7' }
+      ];
+      
+      instrumentsDiv.innerHTML = instruments.map(inst => `
+        <div class="text-center ${unlockedInstruments.has(inst.id) ? '' : 'opacity-40'}">
+          <div class="text-3xl mb-1">${inst.emoji}</div>
+          <div class="text-xs ${unlockedInstruments.has(inst.id) ? 'text-amber-400' : 'text-gray-500'}">${inst.name}</div>
+          <div class="text-lg font-bold ${unlockedInstruments.has(inst.id) ? 'text-amber-400' : 'text-gray-600'}">
+            ${unlockedInstruments.has(inst.id) ? inst.digit : '?'}
+          </div>
+        </div>
+      `).join('');
+      
+      if (unlockedInstruments.size === 4) {
+        codeDisplay.textContent = finalCode;
+        messageDiv.classList.add('hidden');
+        victoryDiv.classList.remove('hidden');
+      } else {
+        const codeStr = instruments.map(inst => 
+          unlockedInstruments.has(inst.id) ? inst.digit : '?'
+        ).join('');
+        codeDisplay.textContent = codeStr;
+        messageDiv.classList.remove('hidden');
+        victoryDiv.classList.add('hidden');
+      }
+    }
     
     function submitCardCode() {
         const instrument = document.getElementById('instrument-select').value;
